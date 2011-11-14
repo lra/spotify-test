@@ -1,0 +1,67 @@
+===============================================================================
+
+Problem:
+
+IMDB top list archive
+
+The goal of this test is to create a simple archive of the top 10 movies on IMDB. The archive should be browseable by date.
+
+1. Write a script that parses the data from the toplist found at http://www.imdb.com/chart/top and stores rank, rating, title, year and number_of_votes in a mysql database. Do also add appropriate db fields for making sure that the top list can be retrieved per date. It should be possible to set this script up as a recurring job that fetches the data automatically.
+
+2. Create a basic web page that displays the top 10 movies for a specific date. There should be an input field where the user can enter the date for which the list should be displayed. When retrieving the movie data from the database, a cache layer should be utilized to prevent the database from being queried each time the data needs to be displayed.
+
+The code should be written in PHP5.
+
+===============================================================================
+
+Install and run:
+
+	- Edit the config file to point to your MySQL server
+	- Create the needed table by running the movies.sql script
+ 	- Make sure the cache folder is writable by php
+	- Launch the update on the CLI: php -f update-movie-list.php
+	- Launch the front end in your browser: http://some/host/movie-list.php
+
+===============================================================================
+
+Data structure:
+
+movies:
+ - id UNSIGNED INT PRIMARY KEY
+ - rank UNSIGNED INT NOT NULL
+ - rating UNSIGNED DECIMAL(3,1) NOT NULL
+ - title VARCHAR(255) NOT NULL
+ - release_year YEAR(4) NOT NULL
+ - number_of_votes UNSIGNED INT NOT NULL
+
+Indexes:
+ - year
+ - number_of_votes
+
+Unicity:
+ - id
+ - rank
+
+The table creation script in in the file movies.sql
+
+===============================================================================
+
+Features:
+ - Data consistency on the database level and on the application level e.g.:
+	- Type checking on both sides
+	- No movie can share the same rank as another
+ - Scanning the movies again only update new or updated movies
+ - Caching: Each yearly list of top movies is serialized into the cache folder
+
+===============================================================================
+
+Files:
+	- Check.php : Utility functions for type checking
+	- config.ini : Configuration file
+	- lib.php : Common code shared by the front end and the back end
+	- movie-list.php : The front end to run in your browser
+	- Movie.php : The Movie class, database getter, and caching engine about movies
+	- movies.sql : The SQL definition if the table
+	- Parser.php : The parser engine that will parse IMDB
+	- template.html : The front end HTML template
+	- update-movie-list.php : The CLI script to update the database with IMDB
