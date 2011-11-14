@@ -1,0 +1,2 @@
+This folder is used by the cache engine.
+Make sure it's writable by your Web Server's PHP.
